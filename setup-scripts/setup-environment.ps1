@@ -34,12 +34,24 @@ Write-Host "Setting up environment variables..." -ForegroundColor Cyan
 $currentPath = [Environment]::GetEnvironmentVariable("PATH", "User")
 $newPaths = @(
     "C:\Projects\Scripts",
-    "C:\Projects\Tools"
+    "C:\Projects\Tools",
+    "$env:APPDATA\npm",                                  # NPM global packages
+    "$env:LOCALAPPDATA\Programs\Python\Python311",       # Python 3.11
+    "$env:LOCALAPPDATA\Programs\Python\Python311\Scripts", # Python 3.11 Scripts
+    "$env:LOCALAPPDATA\uv\bin",                          # UV Python package manager
+    "$env:ProgramFiles\nodejs",                          # Node.js
+    "$env:APPDATA\nvm",                                  # NVM for Windows
+    "$env:USERPROFILE\AppData\Local\Microsoft\WinGet\Packages", # WinGet packages
+    "$env:USERPROFILE\.cargo\bin"                        # Rust tools
 )
 
 foreach ($path in $newPaths) {
-    if (!(Test-Path -Path $path)) {
-        New-Item -Path $path -ItemType Directory -Force
+    if (!(Test-Path -Path $path -ErrorAction SilentlyContinue)) {
+        try {
+            New-Item -Path $path -ItemType Directory -Force -ErrorAction SilentlyContinue | Out-Null
+        } catch {
+            Write-Host "Could not create path: $path" -ForegroundColor Yellow
+        }
     }
     
     if (!$currentPath.Contains($path)) {
@@ -47,7 +59,11 @@ foreach ($path in $newPaths) {
     }
 }
 
-[Environment]::SetEnvironmentVariable("PATH", $currentPath, "User")
+# Clean up any duplicate paths
+$pathArray = $currentPath.Split(';') | Where-Object { $_ -ne "" } | Select-Object -Unique
+$cleanPath = $pathArray -join ';'
+
+[Environment]::SetEnvironmentVariable("PATH", $cleanPath, "User")
 
 # Create PowerShell profile
 Write-Host "Setting up PowerShell profile..." -ForegroundColor Yellow
@@ -85,6 +101,8 @@ function prompt {
 # Aliases
 Set-Alias -Name g -Value git
 Set-Alias -Name code -Value code-insiders -ErrorAction SilentlyContinue
+Set-Alias -Name np -Value notepad++.exe -ErrorAction SilentlyContinue
+Set-Alias -Name py -Value python
 
 # Common Functions
 function cdp { Set-Location -Path "C:\Projects" }
@@ -101,11 +119,35 @@ function gpl { git pull }
 function gps { git push }
 function gnb { param([string]`$branch) git checkout -b `$branch }
 
+# NVM shortcuts
+function nvml { nvm list }
+function nvmu { param([string]`$version) nvm use `$version }
+function nvmi { param([string]`$version) nvm install `$version }
+
+# Python shortcuts
+function uvenv { 
+    param([string]`$envName = ".venv")
+    uv venv `$envName
+    if (Test-Path -Path "`$envName\Scripts\Activate.ps1") {
+        & "`$envName\Scripts\Activate.ps1"
+    }
+}
+function cenv { 
+    param([string]`$envName = ".venv")
+    if (Test-Path -Path "`$envName\Scripts\Activate.ps1") {
+        & "`$envName\Scripts\Activate.ps1"
+    }
+}
+
 # Azure shortcuts
 function azl { az login }
 function azs { param([string]`$subscription) az account set --subscription `$subscription }
 function azls { az account list --output table }
 function azcr { param([string]`$rg) az configure --defaults group=`$rg }
+
+# WSL shortcuts
+function ub { wsl -d Ubuntu }
+function suse { wsl -d openSUSE-Leap-15.5 }
 
 # Use PSReadLine for better command line editing
 if (Get-Module -ListAvailable -Name PSReadLine) {
@@ -126,7 +168,10 @@ if (Get-Module -ListAvailable -Name Az) {
 Write-Host "Azure Dev Box PowerShell Environment" -ForegroundColor Cyan
 Write-Host "Project shortcuts: cdp, cdw, cds, cdl, cdt" -ForegroundColor Green
 Write-Host "Git shortcuts: gst, gcm, gaa, gpl, gps, gnb" -ForegroundColor Green
+Write-Host "NVM shortcuts: nvml, nvmu, nvmi" -ForegroundColor Green
+Write-Host "Python shortcuts: uvenv, cenv" -ForegroundColor Green
 Write-Host "Azure shortcuts: azl, azs, azls, azcr" -ForegroundColor Green
+Write-Host "WSL shortcuts: ub (Ubuntu), suse (openSUSE)" -ForegroundColor Green
 "@
 
 $documentsPath = [Environment]::GetFolderPath('MyDocuments')
@@ -161,10 +206,70 @@ Write-Host @"
 |  Shortcuts in PowerShell:                               |
 |  - cdp: Go to Projects folder                           |
 |  - gst: Git status                                      |
-|  - azl: Azure login                                     |
+|  - nvml: List Node.js versions                          |
+|  - uvenv: Create Python virtual env with uv             |
+|  - ub: Open Ubuntu WSL                                  |
+|  - suse: Open openSUSE WSL                              |
 |                                                         |
 +---------------------------------------------------------+
 "@
+
+# Check for installed tools
+Write-Host "`nInstalled Tools:" -ForegroundColor Cyan
+
+# Python
+try {
+    `$pythonVersion = python --version 2>&1
+    Write-Host "Python: " -NoNewline
+    Write-Host `$pythonVersion -ForegroundColor Green
+} catch {
+    Write-Host "Python: Not detected" -ForegroundColor Red
+}
+
+# Node.js
+try {
+    `$nodeVersion = node --version
+    Write-Host "Node.js: " -NoNewline
+    Write-Host `$nodeVersion -ForegroundColor Green
+} catch {
+    Write-Host "Node.js: Not detected" -ForegroundColor Red
+}
+
+# NVM
+try {
+    `$nvmVersion = nvm version
+    Write-Host "NVM: " -NoNewline
+    Write-Host `$nvmVersion -ForegroundColor Green
+} catch {
+    Write-Host "NVM: Not detected" -ForegroundColor Red
+}
+
+# UV
+try {
+    `$uvVersion = uv --version
+    Write-Host "UV: " -NoNewline
+    Write-Host `$uvVersion -ForegroundColor Green
+} catch {
+    Write-Host "UV: Not detected" -ForegroundColor Red
+}
+
+# WSL
+try {
+    `$wslDistros = wsl --list --verbose | Out-String
+    if (`$wslDistros -match "Ubuntu") {
+        Write-Host "Ubuntu WSL: Installed" -ForegroundColor Green
+    } else {
+        Write-Host "Ubuntu WSL: Not installed" -ForegroundColor Red
+    }
+    
+    if (`$wslDistros -match "openSUSE") {
+        Write-Host "openSUSE WSL: Installed" -ForegroundColor Green
+    } else {
+        Write-Host "openSUSE WSL: Not installed" -ForegroundColor Red
+    }
+} catch {
+    Write-Host "WSL: Not detected" -ForegroundColor Red
+}
 
 # Check for Azure login status
 try {
@@ -197,13 +302,19 @@ try {
 }
 
 Write-Host "`nType 'code' to launch Visual Studio Code." -ForegroundColor Cyan
+Write-Host "Type 'np' to launch Notepad++." -ForegroundColor Cyan
+Write-Host "Type 'uvenv' to create a new Python environment with UV." -ForegroundColor Cyan
+Write-Host "Type 'ub' to launch Ubuntu WSL." -ForegroundColor Cyan
 "@
 
 $welcomeScriptPath = "C:\Projects\Scripts\welcome.ps1"
+if (!(Test-Path -Path (Split-Path -Parent $welcomeScriptPath))) {
+    New-Item -Path (Split-Path -Parent $welcomeScriptPath) -ItemType Directory -Force
+}
 $welcomeScript | Out-File -FilePath $welcomeScriptPath -Force -Encoding utf8
 
 # Create scheduled task to run welcome script at logon
-$action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File $welcomeScriptPath"
+$action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-NoProfile -WindowStyle Normal -ExecutionPolicy Bypass -File $welcomeScriptPath"
 $trigger = New-ScheduledTaskTrigger -AtLogOn -User $env:USERNAME
 $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
 $principal = New-ScheduledTaskPrincipal -UserId $env:USERNAME -LogonType Interactive -RunLevel Highest
@@ -252,5 +363,54 @@ if (Get-Command docker -ErrorAction SilentlyContinue) {
     
     $dockerConfig | Out-File -FilePath $dockerConfigPath -Force -Encoding utf8
 }
+
+# Set up Python configuration
+Write-Host "Setting up Python configuration..." -ForegroundColor Yellow
+$pythonConfigDir = "C:\Projects\Config\Python"
+if (!(Test-Path -Path $pythonConfigDir)) {
+    New-Item -Path $pythonConfigDir -ItemType Directory -Force
+}
+
+# Create pip.ini for default pip configuration
+$pipConfig = @"
+[global]
+trusted-host = pypi.python.org
+               pypi.org
+               files.pythonhosted.org
+timeout = 60
+"@
+
+$pipConfigPath = "$pythonConfigDir\pip.ini"
+$pipConfig | Out-File -FilePath $pipConfigPath -Force -Encoding utf8
+
+# Create symbolic link to pip.ini in user directory
+$userPipDir = "$env:APPDATA\pip"
+if (!(Test-Path -Path $userPipDir)) {
+    New-Item -Path $userPipDir -ItemType Directory -Force
+}
+Copy-Item -Path $pipConfigPath -Destination "$userPipDir\pip.ini" -Force
+
+# Set up Node.js configuration
+Write-Host "Setting up Node.js configuration..." -ForegroundColor Yellow
+$nodeConfigDir = "C:\Projects\Config\NodeJS"
+if (!(Test-Path -Path $nodeConfigDir)) {
+    New-Item -Path $nodeConfigDir -ItemType Directory -Force
+}
+
+# Create .npmrc file for npm configuration
+$npmConfig = @"
+registry=https://registry.npmjs.org/
+save=true
+save-exact=false
+init-author-name=
+init-author-email=
+init-license=MIT
+"@
+
+$npmConfigPath = "$nodeConfigDir\.npmrc"
+$npmConfig | Out-File -FilePath $npmConfigPath -Force -Encoding utf8
+
+# Create symbolic link to .npmrc in user directory
+Copy-Item -Path $npmConfigPath -Destination "$env:USERPROFILE\.npmrc" -Force
 
 Write-Host "Azure Dev Box environment configuration complete!" -ForegroundColor Green

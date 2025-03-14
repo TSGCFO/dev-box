@@ -4,11 +4,25 @@ This repository contains scripts and configuration files for setting up a standa
 
 ## What's Included
 
-- **Developer Tools**: Git, VS Code, Node.js, Python, Docker, Azure CLI, and more
-- **VS Code Extensions**: A curated set of extensions for various development scenarios
+### Essential Development Tools
+- **Node.js Environment**: Node.js with npm and nvm for version management
+- **Python Environment**: Python 3.11 with UV package manager
+- **WSL Distributions**: Ubuntu and openSUSE Linux
+- **Version Control**: Git with optimized configuration
+
+### Applications
+- **Development Tools**: VS Code, Docker Desktop
+- **AI Tools**: Claude Desktop, ClaudeMind, Claude Code, ChatGPT
+- **Database**: PostgreSQL
+- **Utilities**: PowerToys, Notepad++, Google Chrome
+- **Azure Tools**: Azure CLI, Azure PowerShell modules
+
+### Configurations
+- **Environment Setup**: Proper PATH environment variables for all tools
 - **Git Configuration**: Standard Git settings, useful aliases, and global .gitignore
-- **Environment Settings**: PowerShell profile, environment variables, and folder structure
-- **Welcome Screen**: A helpful welcome screen with status information and shortcuts
+- **VS Code Setup**: Essential extensions and optimal settings
+- **PowerShell Profile**: Custom prompt, shortcuts, and productivity aliases
+- **Welcome Screen**: Status information and quick reference
 
 ## Folder Structure
 
