@@ -1,0 +1,37 @@
+{
+  "version": "1.0",
+  "name": "Developer Environment Setup",
+  "description": "Complete developer environment setup including tools, VS Code extensions, and configurations",
+  "scripts": [
+    {
+      "name": "Master Setup",
+      "description": "Main setup script that orchestrates the entire configuration",
+      "scriptPath": "setup-scripts/master-setup.ps1",
+      "runAsUser": true
+    },
+    {
+      "name": "Install Developer Tools",
+      "description": "Installs common developer tools and applications",
+      "scriptPath": "setup-scripts/install-tools.ps1",
+      "runAsUser": true
+    },
+    {
+      "name": "Configure Git",
+      "description": "Sets up Git configuration and global gitignore",
+      "scriptPath": "setup-scripts/git-configuration.ps1",
+      "runAsUser": true
+    },
+    {
+      "name": "Configure VS Code",
+      "description": "Installs VS Code extensions and sets up configurations",
+      "scriptPath": "setup-scripts/vscode-configuration.ps1",
+      "runAsUser": true
+    },
+    {
+      "name": "Setup Environment",
+      "description": "Configures environment variables and project structures",
+      "scriptPath": "setup-scripts/setup-environment.ps1",
+      "runAsUser": true
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "version": "1.0",
+  "tasks": [
+    {
+      "name": "setup-dev-environment",
+      "description": "Sets up the complete development environment",
+      "script": "setup-scripts/master-setup.ps1",
+      "runElevated": true,
+      "runOnce": false
+    },
+    {
+      "name": "update-tools",
+      "description": "Updates all developer tools",
+      "script": "setup-scripts/install-tools.ps1",
+      "runElevated": true,
+      "runOnce": false
+    },
+    {
+      "name": "configure-vscode",
+      "description": "Updates VS Code settings and extensions",
+      "script": "setup-scripts/vscode-configuration.ps1",
+      "runElevated": false,
+      "runOnce": false
+    }
+  ]
+}
