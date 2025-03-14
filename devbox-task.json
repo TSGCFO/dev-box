@@ -16,10 +16,24 @@
       "runOnce": false
     },
     {
+      "name": "configure-git",
+      "description": "Reconfigures Git settings",
+      "script": "setup-scripts/git-configuration.ps1",
+      "runElevated": false,
+      "runOnce": false
+    },
+    {
       "name": "configure-vscode",
       "description": "Updates VS Code settings and extensions",
       "script": "setup-scripts/vscode-configuration.ps1",
       "runElevated": false,
+      "runOnce": false
+    },
+    {
+      "name": "refresh-environment",
+      "description": "Refreshes environment settings and PowerShell profile",
+      "script": "setup-scripts/setup-environment.ps1",
+      "runElevated": true,
       "runOnce": false
     }
   ]
