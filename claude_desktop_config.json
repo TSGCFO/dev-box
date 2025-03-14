@@ -1,0 +1,178 @@
+{
+  "globalShortcut": "Shift+Alt+C",
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "C:\\",
+        "C:\\Users\\Hassan\\Desktop",
+        "C:\\Users\\Hassan\\Downloads",
+        "C:\\Users\\Hassan\\Documents",
+        "C:\\Users\\Hassan\\Pictures",
+        "C:\\Users\\Hassan\\Music",
+        "C:\\Users\\Hassan\\Videos",
+        "C:\\Users\\Hassan\\PycharmProjects",
+        "C:\\Users\\Hassan\\VSdode\\LedgerLink_client",
+        "C:\\Users\\Hassan",
+        "D:\\"
+      ]
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ]
+    },
+    "browserbase": {
+      "command": "node",
+      "args": [
+        "C:\\Users\\Hassan\\Documents\\Cline\\MCP\\mcp-server-browserbase\\browserbase\\dist\\index.js"
+      ],
+      "env": {
+        "BROWSERBASE_API_KEY": "bb_live_wFVXP9JBf8tP_JpmDa4I2T_LE68",
+        "BROWSERBASE_PROJECT_ID": "bd3d6775-4605-444c-a4d1-388e517f0c2f"
+      }
+    },
+    "taskmanager": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@kazuph/mcp-taskmanager"
+      ]
+    },
+    "memory": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-memory"
+      ]
+    },
+    "webresearch": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@mzxrai/mcp-webresearch@latest"
+      ]
+    },
+    "document-handler": {
+      "command": "node",
+      "args": [
+        "C:/Users/Hassan/Documents/Cline/MCP/document-handler/build/index.js"
+      ],
+      "env": {
+        "SMTP_HOST": "",
+        "SMTP_PORT": "587",
+        "SMTP_SECURE": "false",
+        "SMTP_USER": "",
+        "SMTP_PASS": ""
+      }
+    },
+    "outlook": {
+      "disabled": true,
+      "command": "node",
+      "args": [
+        "C:/Users/Hassan/Documents/Cline/MCP/outlook-server/src/index.js"
+      ],
+      "env": {
+        "NODE_ENV": "production",
+        "MCP_SERVER_TYPE": "desktop"
+      }
+    },
+    "fetch": {
+      "command": "C:\\Users\\Hassan\\AppData\\Roaming\\Python\\Python313\\Scripts\\uvx.exe",
+      "args": [
+        "mcp-server-fetch"
+      ]
+    },
+    "fetch-save": {
+      "command": "C:\\Users\\Hassan\\AppData\\Roaming\\Python\\Python313\\Scripts\\uvx.exe",
+      "args": [
+        "mcp-server-fetch-save"
+      ]
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-puppeteer"
+      ]
+    },
+    "desktopCommander": {
+      "command": "node",
+      "args": [
+        "C:\\Users\\Hassan\\ClaudeComputerCommander\\dist\\index.js"
+      ]
+    },
+    "mcp-server-aidd": {
+      "runtime": "python",
+      "command": "uvx",
+      "args": [
+        "mcp-server-aidd"
+      ]
+    },
+    "jetbains": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@jetbrains/mcp-proxy"
+      ]
+    },
+    "mcp-server-esignatures": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-esignatures"
+      ],
+      "env": {
+        "ESIGNATURES_SECRET_TOKEN": "1bda33de-fa0c-45cc-80fe-84d79954771c"
+      }
+    },
+    "docker-mcp": {
+      "command": "uvx",
+      "args": [
+        "docker-mcp"
+      ]
+    },
+    "nmap": {
+      "command": "node",
+      "args": [
+        "C:\\Users\\Hassan\\npm-global\\node_modules\\mcp-nmap-server\\dist\\index.js"
+      ]
+    },
+    "deepwebresearch": {
+      "command": "mcp-deepwebresearch",
+      "args": []
+    },
+    "cli-mcp-server": {
+      "command": "uvx",
+      "args": [
+        "cli-mcp-server"
+      ],
+      "env": {
+        "ALLOWED_DIR": "C://Users",
+        "ALLOWED_COMMANDS": "all",
+        "ALLOWED_FLAGS": "all",
+        "MAX_COMMAND_LENGTH": "100024",
+        "COMMAND_TIMEOUT": "300000"
+      }
+    },
+    "e2b-mcp-server": {
+      "command": "C:\\Users\\Hassan\\Python\\Python313\\Scripts\\e2b-mcp-server.exe",
+      "args": [],
+      "env": {
+        "E2B_API_KEY": "e2b_ac1028a62e17d2de22823c85402ad86cd17d3d2a"
+      }
+    },
+    "e2b-js": {
+      "command": "node",
+      "args": [
+        "D:\\mcp-server\\packages\\js\\build\\index.js"
+      ],
+      "env": {
+        "E2B_API_KEY": "e2b_ac1028a62e17d2de22823c85402ad86cd17d3d2a"
+      }
+    }
+  }
+}
