@@ -1,0 +1,79 @@
+{
+  "recommendations": [
+    // Essential extensions
+    "ms-vscode.powershell",
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ms-azuretools.vscode-docker",
+    "ms-vscode-remote.remote-wsl",
+    "ms-vscode-remote.remote-containers",
+    "ms-vscode.azure-account",
+    "ms-azuretools.vscode-azurefunctions",
+    "github.copilot",
+    "github.vscode-pull-request-github",
+    "github.github-vscode-theme",
+    
+    // Languages & Frameworks
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "ms-dotnettools.csharp",
+    "vscjava.vscode-java-pack",
+    "redhat.vscode-yaml",
+    "vscode-icons-team.vscode-icons",
+    "pkief.material-icon-theme",
+    
+    // Git
+    "mhutchie.git-graph",
+    "eamodio.gitlens",
+    
+    // Tools
+    "ms-vscode.live-server",
+    "ms-vsliveshare.vsliveshare",
+    "ritwickdey.liveserver",
+    "streetsidesoftware.code-spell-checker",
+    "redhat.vscode-xml",
+    "ms-vscode.vscode-typescript-next",
+    "bradlc.vscode-tailwindcss",
+    "ms-playwright.playwright",
+    "ms-azuretools.vscode-bicep",
+    
+    // AI tools
+    "GitHub.copilot-chat",
+    "GitHub.copilot-labs",
+    "Anthropic.claude",
+    
+    // Azure
+    "ms-azuretools.vscode-azureresourcegroups",
+    "ms-azuretools.vscode-azurestorage",
+    "ms-azuretools.vscode-cosmosdb",
+    "ms-azuretools.vscode-azurestaticwebapps",
+    
+    // Databases
+    "ms-mssql.mssql",
+    "cweijan.vscode-postgresql-client2",
+    "mongodb.mongodb-vscode",
+    
+    // React/Vue/Angular
+    "dsznajder.es7-react-js-snippets",
+    "Vue.volar",
+    "angular.ng-template",
+    
+    // Markdown & Documentation
+    "yzhang.markdown-all-in-one",
+    "bierner.markdown-preview-github-styles",
+    "DavidAnson.vscode-markdownlint",
+    
+    // Themes
+    "dracula-theme.theme-dracula",
+    "zhuangtongfa.material-theme",
+    "akamud.vscode-theme-onedark",
+    "wesbos.theme-cobalt2",
+    
+    // Utilities
+    "christian-kohler.path-intellisense",
+    "wayou.vscode-todo-highlight",
+    "gruntfuggly.todo-tree",
+    "shardulm94.trailing-spaces",
+    "usernamehw.errorlens"
+  ]
+}
