@@ -14,7 +14,7 @@ This repository contains scripts and configuration files for setting up a standa
 - **Development Tools**: VS Code, Docker Desktop
 - **AI Tools**: Claude Desktop, ClaudeMind, Claude Code, ChatGPT
 - **Database**: PostgreSQL
-- **Utilities**: PowerToys, Notepad++, Google Chrome
+- **Utilities**: PowerToys, Notepad++, Google Chrome, Ngrok
 - **Azure Tools**: Azure CLI, Azure PowerShell modules
 
 ### Configurations
@@ -23,6 +23,12 @@ This repository contains scripts and configuration files for setting up a standa
 - **VS Code Setup**: Essential extensions and optimal settings
 - **PowerShell Profile**: Custom prompt, shortcuts, and productivity aliases
 - **Welcome Screen**: Status information and quick reference
+
+### File Templates and Project Structure
+- **Folder Structure**: Organized project directories for different types of development
+- **Project Templates**: Ready-to-use templates for React, API, Python, and more
+- **Configuration Files**: Docker, CI/CD, TypeScript, and other configuration samples
+- **Example Files**: .env examples, package.json, requirements.txt, and more
 
 ## Folder Structure
 
@@ -34,10 +40,13 @@ This repository contains scripts and configuration files for setting up a standa
 ## Main Scripts
 
 1. **master-setup.ps1**: The main orchestration script that runs all other scripts
-2. **install-tools.ps1**: Installs developer tools and applications
-3. **git-configuration.ps1**: Sets up Git configuration
-4. **vscode-configuration.ps1**: Configures VS Code with extensions and settings
-5. **setup-environment.ps1**: Sets up environment variables and project structure
+2. **config-definitions.ps1**: Centralized configurations used across multiple scripts
+3. **setup-files-folders.ps1**: Creates standard file structure, templates, and example files
+4. **install-tools.ps1**: Installs developer tools and applications
+5. **git-configuration.ps1**: Sets up Git configuration
+6. **vscode-configuration.ps1**: Configures VS Code with extensions and settings
+7. **setup-environment.ps1**: Sets up environment variables and project structure
+8. **update-task-definitions.ps1**: Synchronizes task definitions across configuration files
 
 ## How to Use
 

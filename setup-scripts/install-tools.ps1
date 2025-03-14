@@ -42,7 +42,8 @@ $wingetConfig = @"
         { "PackageIdentifier": "PostgreSQL.PostgreSQL" },
         { "PackageIdentifier": "Google.Chrome" },
         { "PackageIdentifier": "Notepad++.Notepad++" },
-        { "PackageIdentifier": "Microsoft.WindowsTerminal" }
+        { "PackageIdentifier": "Microsoft.WindowsTerminal" },
+        { "PackageIdentifier": "Ngrok.Ngrok" }
       ]
     }
   ]
@@ -52,13 +53,33 @@ $wingetConfig = @"
 $wingetConfigPath = "$PSScriptRoot\devbox-tools.json"
 $wingetConfig | Out-File -FilePath $wingetConfigPath -Encoding utf8
 
-# Install tools using Winget
+# Install tools using Winget as primary package manager
 Write-Host "Installing applications using Winget..." -ForegroundColor Yellow
 winget import -i $wingetConfigPath --accept-package-agreements --accept-source-agreements --ignore-unavailable
 
-# Install common dev tools with Chocolatey (in case Winget fails)
-Write-Host "Installing applications using Chocolatey (backup method)..." -ForegroundColor Yellow
-choco install git vscode nodejs python311 docker-desktop azure-cli powershell-core postgresql googlechrome notepadplusplus powertoys -y
+# Chocolatey will only be used for tools not available in Winget
+# Determine which tools were not successfully installed by Winget
+$fallbackTools = @()
+
+# Check for tools that might not have been installed by Winget
+$toolsToCheck = @{
+    "ngrok" = "ngrok"
+    "postgresql" = "psql"
+}
+
+foreach ($tool in $toolsToCheck.Keys) {
+    if (!(Get-Command $toolsToCheck[$tool] -ErrorAction SilentlyContinue)) {
+        $fallbackTools += $tool
+    }
+}
+
+if ($fallbackTools.Count -gt 0) {
+    Write-Host "Installing missing tools using Chocolatey..." -ForegroundColor Yellow
+    foreach ($tool in $fallbackTools) {
+        Write-Host "Installing $tool with Chocolatey..." -ForegroundColor Yellow
+        choco install $tool -y
+    }
+}
 
 # Install ClaudeMind using direct download if available
 Write-Host "Installing ClaudeMind..." -ForegroundColor Yellow
@@ -100,14 +121,10 @@ pip install --upgrade pip
 pip install uv
 pip install black pytest pylint flake8 mypy django djangorestframework requests python-dotenv pandas numpy matplotlib jupyter
 
-# Add uv to PATH explicitly
+# Create uv path directory if needed, but PATH management is centralized in setup-environment.ps1
 $uvPath = "$env:LOCALAPPDATA\uv\bin"
 if (!(Test-Path -Path $uvPath)) {
     New-Item -Path $uvPath -ItemType Directory -Force
-}
-$currentPath = [Environment]::GetEnvironmentVariable("PATH", "User")
-if (!$currentPath.Contains($uvPath)) {
-    [Environment]::SetEnvironmentVariable("PATH", "$currentPath;$uvPath", "User")
 }
 
 # Install Node.js packages globally
@@ -138,5 +155,37 @@ if (!(Get-Module -ListAvailable -Name Az)) {
 # Install GitHub CLI
 Write-Host "Installing GitHub CLI..." -ForegroundColor Yellow
 winget install GitHub.cli --accept-source-agreements --accept-package-agreements
+
+# Configure ngrok with auth token if provided
+Write-Host "Configuring ngrok..." -ForegroundColor Yellow
+
+# Source the centralized configuration
+. $PSScriptRoot\config-definitions.ps1
+
+# Check if ngrok is installed using the centralized function
+$ngrokStatus = Test-ToolInstallation -CommandName "ngrok"
+if (!$ngrokStatus.Installed) {
+    Write-Host "ngrok not found in PATH. Please install ngrok and configure it manually." -ForegroundColor Yellow
+} else {
+    # Check if ngrok is already authenticated
+    $ngrokAuthStatus = Test-NgrokAuth
+    if ($ngrokAuthStatus.Configured) {
+        Write-Host "ngrok is already configured with auth token" -ForegroundColor Green
+    } else {
+        $ngrokAuthToken = $env:NGROK_AUTH_TOKEN
+        
+        if ([string]::IsNullOrEmpty($ngrokAuthToken)) {
+            $ngrokAuthToken = Read-Host -Prompt "Enter your ngrok auth token (press Enter to skip)"
+        }
+        
+        if (![string]::IsNullOrEmpty($ngrokAuthToken)) {
+            # Configure ngrok with the auth token
+            Start-Process -FilePath "ngrok" -ArgumentList "config add-authtoken $ngrokAuthToken" -NoNewWindow -Wait
+            Write-Host "ngrok configured with auth token" -ForegroundColor Green
+        } else {
+            Write-Host "No ngrok auth token provided. You'll need to configure ngrok manually." -ForegroundColor Yellow
+        }
+    }
+}
 
 Write-Host "Development tools installation complete!" -ForegroundColor Green

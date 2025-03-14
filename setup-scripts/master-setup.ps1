@@ -3,25 +3,13 @@
 
 Write-Host "Starting development environment setup..." -ForegroundColor Cyan
 
-# Step 1: Set up project directory structure
-Write-Host "Step 1: Setting up project directory structure..." -ForegroundColor Yellow
-$projectFolders = @(
-    "C:\Projects",
-    "C:\Projects\WebApps",
-    "C:\Projects\Scripts",
-    "C:\Projects\Libraries",
-    "C:\Projects\Experiments",
-    "C:\Projects\Documentation",
-    "C:\Projects\Config",
-    "C:\Projects\Templates"
-)
+# Step 0: Update task definitions to ensure catalog.json and devbox-task.json are in sync
+Write-Host "Step 0: Updating task definitions..." -ForegroundColor Yellow
+. $PSScriptRoot\update-task-definitions.ps1
 
-foreach ($folder in $projectFolders) {
-    if (!(Test-Path -Path $folder)) {
-        New-Item -Path $folder -ItemType Directory -Force
-        Write-Host "Created folder: $folder" -ForegroundColor Green
-    }
-}
+# Step 1: Set up project directory structure, files and templates
+Write-Host "Step 1: Setting up project directory structure and templates..." -ForegroundColor Yellow
+. $PSScriptRoot\setup-files-folders.ps1
 
 # Step 2: Install developer tools
 Write-Host "Step 2: Installing developer tools..." -ForegroundColor Yellow
@@ -37,10 +25,7 @@ Write-Host "Step 4: Configuring VS Code..." -ForegroundColor Yellow
 
 # Step 5: Set up environment variables
 Write-Host "Step 5: Setting up environment variables..." -ForegroundColor Yellow
-[Environment]::SetEnvironmentVariable("NODE_ENV", "development", "User")
-[Environment]::SetEnvironmentVariable("PYTHONPATH", "C:\Projects", "User")
-[Environment]::SetEnvironmentVariable("EDITOR", "code", "User")
-[Environment]::SetEnvironmentVariable("PROJECTS_ROOT", "C:\Projects", "User")
+# Environment variables are now centralized in setup-environment.ps1
 
 # Step 6: Install Azure CLI extensions for Dev Box
 Write-Host "Step 6: Setting up Azure CLI extensions..." -ForegroundColor Yellow

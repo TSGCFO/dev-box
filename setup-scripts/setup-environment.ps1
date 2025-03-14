@@ -2,48 +2,23 @@
 
 Write-Host "Setting up Azure Dev Box environment configuration..." -ForegroundColor Cyan
 
-# Create configuration directories
-$configDirs = @(
-    "C:\Projects\Config\VSCode",
-    "C:\Projects\Config\Git",
-    "C:\Projects\Config\NodeJS",
-    "C:\Projects\Config\Python",
-    "C:\Projects\Config\Azure",
-    "C:\Projects\Config\Docker",
-    "C:\Projects\Config\PowerShell",
-    "C:\Projects\Templates"
-)
-
-foreach ($dir in $configDirs) {
-    if (!(Test-Path -Path $dir)) {
-        New-Item -Path $dir -ItemType Directory -Force
-        Write-Host "Created directory: $dir" -ForegroundColor Green
-    }
-}
+# Directory creation is now centralized in setup-files-folders.ps1
 
 # Set up environment variables for development
 Write-Host "Setting up environment variables..." -ForegroundColor Cyan
 
-# Common development environment variables
-[Environment]::SetEnvironmentVariable("NODE_ENV", "development", "User")
-[Environment]::SetEnvironmentVariable("PYTHONPATH", "C:\Projects", "User")
-[Environment]::SetEnvironmentVariable("EDITOR", "code", "User")
-[Environment]::SetEnvironmentVariable("PROJECTS_ROOT", "C:\Projects", "User")
+# Source the centralized configuration
+. $PSScriptRoot\config-definitions.ps1
 
-# Add custom directories to PATH
+# Set common development environment variables from centralized config
+foreach ($key in $script:EnvironmentVariables.Keys) {
+    [Environment]::SetEnvironmentVariable($key, $script:EnvironmentVariables[$key], "User")
+    Write-Host "Set environment variable: $key = $($script:EnvironmentVariables[$key])" -ForegroundColor Green
+}
+
+# Add custom directories to PATH from centralized config
 $currentPath = [Environment]::GetEnvironmentVariable("PATH", "User")
-$newPaths = @(
-    "C:\Projects\Scripts",
-    "C:\Projects\Tools",
-    "$env:APPDATA\npm",                                  # NPM global packages
-    "$env:LOCALAPPDATA\Programs\Python\Python311",       # Python 3.11
-    "$env:LOCALAPPDATA\Programs\Python\Python311\Scripts", # Python 3.11 Scripts
-    "$env:LOCALAPPDATA\uv\bin",                          # UV Python package manager
-    "$env:ProgramFiles\nodejs",                          # Node.js
-    "$env:APPDATA\nvm",                                  # NVM for Windows
-    "$env:USERPROFILE\AppData\Local\Microsoft\WinGet\Packages", # WinGet packages
-    "$env:USERPROFILE\.cargo\bin"                        # Rust tools
-)
+$newPaths = $script:PathDirectories
 
 foreach ($path in $newPaths) {
     if (!(Test-Path -Path $path -ErrorAction SilentlyContinue)) {
@@ -111,13 +86,13 @@ function cds { Set-Location -Path "C:\Projects\Scripts" }
 function cdl { Set-Location -Path "C:\Projects\Libraries" }
 function cdt { Set-Location -Path "C:\Projects\Templates" }
 
-# Git shortcuts
-function gst { git status }
-function gcm { param([string]`$message) git commit -m `$message }
-function gaa { git add --all }
-function gpl { git pull }
-function gps { git push }
-function gnb { param([string]`$branch) git checkout -b `$branch }
+# Git shortcuts - uses git aliases configured in git-configuration.ps1
+function gst { git st }    # maps to 'git status' alias
+function gcm { param([string]`$message) git ci -m `$message }  # maps to 'git commit' alias
+function gaa { git add --all }  # no alias needed
+function gpl { git pull }       # no alias needed
+function gps { git push }       # no alias needed
+function gnb { param([string]`$branch) git co -b `$branch }  # maps to 'git checkout' alias
 
 # NVM shortcuts
 function nvml { nvm list }
@@ -214,42 +189,60 @@ Write-Host @"
 +---------------------------------------------------------+
 "@
 
-# Check for installed tools
+# Check for installed tools using centralized function
 Write-Host "`nInstalled Tools:" -ForegroundColor Cyan
 
+# Ngrok - using centralized functions
+$ngrokStatus = Test-ToolInstallation -CommandName "ngrok"
+if ($ngrokStatus.Installed) {
+    Write-Host "Ngrok: " -NoNewline
+    Write-Host $ngrokStatus.Version -ForegroundColor Green
+    
+    # Check if ngrok is authenticated using the centralized function
+    $ngrokAuthStatus = Test-NgrokAuth
+    Write-Host "Ngrok auth: " -NoNewline
+    if ($ngrokAuthStatus.Configured) {
+        Write-Host $ngrokAuthStatus.Message -ForegroundColor Green
+    } else {
+        Write-Host $ngrokAuthStatus.Message -ForegroundColor Red
+    }
+} else {
+    Write-Host "Ngrok: Not detected" -ForegroundColor Red
+}
+
 # Python
-try {
-    `$pythonVersion = python --version 2>&1
+$pythonStatus = Test-ToolInstallation -CommandName "python"
+if ($pythonStatus.Installed) {
     Write-Host "Python: " -NoNewline
-    Write-Host `$pythonVersion -ForegroundColor Green
-} catch {
+    Write-Host $pythonStatus.Version -ForegroundColor Green
+} else {
     Write-Host "Python: Not detected" -ForegroundColor Red
 }
 
 # Node.js
-try {
-    `$nodeVersion = node --version
+$nodeStatus = Test-ToolInstallation -CommandName "node"
+if ($nodeStatus.Installed) {
     Write-Host "Node.js: " -NoNewline
-    Write-Host `$nodeVersion -ForegroundColor Green
-} catch {
+    Write-Host $nodeStatus.Version -ForegroundColor Green
+} else {
     Write-Host "Node.js: Not detected" -ForegroundColor Red
 }
 
 # NVM
-try {
-    `$nvmVersion = nvm version
+$nvmStatus = Test-ToolInstallation -CommandName "nvm" -Arguments "version"
+if ($nvmStatus.Installed) {
     Write-Host "NVM: " -NoNewline
-    Write-Host `$nvmVersion -ForegroundColor Green
-} catch {
+    Write-Host $nvmStatus.Version -ForegroundColor Green
+} else {
     Write-Host "NVM: Not detected" -ForegroundColor Red
 }
 
 # UV
-try {
-    `$uvVersion = uv --version
+$uvStatus = Test-ToolInstallation -CommandName "uv"
+if ($uvStatus.Installed) {
     Write-Host "UV: " -NoNewline
-    Write-Host `$uvVersion -ForegroundColor Green
-} catch {
+    Write-Host $uvStatus.Version -ForegroundColor Green
+} else {
     Write-Host "UV: Not detected" -ForegroundColor Red
 }
 
@@ -335,24 +328,8 @@ if (Get-Command docker -ErrorAction SilentlyContinue) {
         New-Item -Path $dockerConfigDir -ItemType Directory -Force
     }
     
-    # Configure Docker to use WSL 2
-    $dockerConfig = @"
-{
-  "builder": {
-    "gc": {
-      "defaultKeepStorage": "20GB",
-      "enabled": true
-    }
-  },
-  "experimental": false,
-  "features": {
-    "buildkit": true
-  },
-  "wsl-ubuntu": {
-    "enabled": true
-  }
-}
-"@
+    # Configure Docker to use WSL 2 from centralized config
+    $dockerConfig = Get-DockerConfig
     
     $dockerConfigPath = "$env:USERPROFILE\.docker\config.json"
     $dockerConfigDir = Split-Path -Parent $dockerConfigPath
@@ -371,14 +348,8 @@ if (!(Test-Path -Path $pythonConfigDir)) {
     New-Item -Path $pythonConfigDir -ItemType Directory -Force
 }
 
-# Create pip.ini for default pip configuration
-$pipConfig = @"
-[global]
-trusted-host = pypi.python.org
-               pypi.org
-               files.pythonhosted.org
-timeout = 60
-"@
+# Create pip.ini for default pip configuration from centralized config
+$pipConfig = Get-PipConfig
 
 $pipConfigPath = "$pythonConfigDir\pip.ini"
 $pipConfig | Out-File -FilePath $pipConfigPath -Force -Encoding utf8
@@ -397,15 +368,8 @@ if (!(Test-Path -Path $nodeConfigDir)) {
     New-Item -Path $nodeConfigDir -ItemType Directory -Force
 }
 
-# Create .npmrc file for npm configuration
-$npmConfig = @"
-registry=https://registry.npmjs.org/
-save=true
-save-exact=false
-init-author-name=
-init-author-email=
-init-license=MIT
-"@
+# Create .npmrc file for npm configuration from centralized config
+$npmConfig = Get-NpmConfig
 
 $npmConfigPath = "$nodeConfigDir\.npmrc"
 $npmConfig | Out-File -FilePath $npmConfigPath -Force -Encoding utf8

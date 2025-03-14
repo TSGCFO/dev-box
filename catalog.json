@@ -11,6 +11,13 @@
       "runElevated": true
     },
     {
+      "name": "Setup Files and Folders",
+      "description": "Creates standard file structure, templates, and example files for development",
+      "scriptPath": "setup-scripts/setup-files-folders.ps1",
+      "runAsUser": true,
+      "runElevated": false
+    },
+    {
       "name": "Install Developer Tools",
       "description": "Installs common developer tools, languages, and applications",
       "scriptPath": "setup-scripts/install-tools.ps1",

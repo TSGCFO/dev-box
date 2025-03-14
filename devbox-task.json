@@ -9,6 +9,13 @@
       "runOnce": false
     },
     {
+      "name": "setup-files-folders",
+      "description": "Creates standard file structure, templates, and example files",
+      "script": "setup-scripts/setup-files-folders.ps1",
+      "runElevated": false,
+      "runOnce": false
+    },
+    {
       "name": "update-tools",
       "description": "Updates all developer tools",
       "script": "setup-scripts/install-tools.ps1",
