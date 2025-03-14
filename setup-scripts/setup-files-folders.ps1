@@ -1,68 +1,113 @@
 # Script to set up standard files and folders for development on Azure Dev Box
+param (
+    [string[]]$ProjectStructure = @("comprehensive")
+)
 
 Write-Host "Setting up standard files and folders for development..." -ForegroundColor Cyan
+Write-Host "Project structure type: $ProjectStructure" -ForegroundColor Yellow
 
-# Create standard project directory structure with more granularity
-$projectFolders = @(
-    # Main project directories
-    "C:\Projects",
-    "C:\Projects\WebApps",
-    "C:\Projects\APIs",
-    "C:\Projects\Mobile",
-    "C:\Projects\Desktop",
-    "C:\Projects\Scripts",
-    "C:\Projects\Libraries",
-    "C:\Projects\Tools",
-    "C:\Projects\ML",
-    "C:\Projects\AI",
-    "C:\Projects\Cloud",
-    "C:\Projects\DevOps",
-    "C:\Projects\Documentation",
-    "C:\Projects\Config",
-    "C:\Projects\Templates",
-    "C:\Projects\Research",
-    "C:\Projects\Data",
+# Define the base project directory
+$projectsBaseDir = "C:\Projects"
+
+# Create the base projects directory
+if (!(Test-Path -Path $projectsBaseDir)) {
+    New-Item -Path $projectsBaseDir -ItemType Directory -Force
+    Write-Host "Created base folder: $projectsBaseDir" -ForegroundColor Green
+}
+
+# Define project folder structures based on selection
+$simpleProjectFolders = @(
+    # Main project directories - Simple structure
+    "$projectsBaseDir",
+    "$projectsBaseDir\WebApps",
+    "$projectsBaseDir\APIs",
+    "$projectsBaseDir\Scripts",
+    "$projectsBaseDir\Libraries",
+    "$projectsBaseDir\Templates",
+    "$projectsBaseDir\Data",
+    "$projectsBaseDir\Config",
     
-    # Configuration directories with greater specificity
-    "C:\Projects\Config\VSCode",
-    "C:\Projects\Config\Git",
-    "C:\Projects\Config\NodeJS",
-    "C:\Projects\Config\Python",
-    "C:\Projects\Config\Azure",
-    "C:\Projects\Config\Docker",
-    "C:\Projects\Config\PowerShell",
-    "C:\Projects\Config\WSL",
-    "C:\Projects\Config\Terminal",
-    "C:\Projects\Config\Nginx",
+    # Template directories - Simple structure
+    "$projectsBaseDir\Templates\WebApp",
+    "$projectsBaseDir\Templates\API",
     
-    # Template directories for various project types
-    "C:\Projects\Templates\WebApp",
-    "C:\Projects\Templates\API",
-    "C:\Projects\Templates\ReactApp",
-    "C:\Projects\Templates\VueApp",
-    "C:\Projects\Templates\AngularApp",
-    "C:\Projects\Templates\NextApp",
-    "C:\Projects\Templates\DotNetAPI",
-    "C:\Projects\Templates\PythonAPI",
-    "C:\Projects\Templates\ML",
-    
-    # Data directories
-    "C:\Projects\Data\Raw",
-    "C:\Projects\Data\Processed",
-    "C:\Projects\Data\Models",
-    "C:\Projects\Data\Results",
-    
-    # Documentation directories
-    "C:\Projects\Documentation\Architecture",
-    "C:\Projects\Documentation\APIs",
-    "C:\Projects\Documentation\UserGuides",
-    "C:\Projects\Documentation\DevGuides",
-    
-    # Special directories
-    "C:\Projects\Local",  # For local development only (added to .gitignore)
-    "C:\Projects\Scratch", # For quick experiments (added to .gitignore)
-    "C:\Projects\Backup"   # For backups
+    # Special directories - Simple structure
+    "$projectsBaseDir\Local",
+    "$projectsBaseDir\Backup"
 )
+
+$comprehensiveProjectFolders = @(
+    # Main project directories - Comprehensive structure
+    "$projectsBaseDir",
+    "$projectsBaseDir\WebApps",
+    "$projectsBaseDir\APIs",
+    "$projectsBaseDir\Mobile",
+    "$projectsBaseDir\Desktop",
+    "$projectsBaseDir\Scripts",
+    "$projectsBaseDir\Libraries",
+    "$projectsBaseDir\Tools",
+    "$projectsBaseDir\ML",
+    "$projectsBaseDir\AI",
+    "$projectsBaseDir\Cloud",
+    "$projectsBaseDir\DevOps",
+    "$projectsBaseDir\Documentation",
+    "$projectsBaseDir\Config",
+    "$projectsBaseDir\Templates",
+    "$projectsBaseDir\Research",
+    "$projectsBaseDir\Data",
+    
+    # Configuration directories - Comprehensive structure
+    "$projectsBaseDir\Config\VSCode",
+    "$projectsBaseDir\Config\Git",
+    "$projectsBaseDir\Config\NodeJS",
+    "$projectsBaseDir\Config\Python",
+    "$projectsBaseDir\Config\Azure",
+    "$projectsBaseDir\Config\Docker",
+    "$projectsBaseDir\Config\PowerShell",
+    "$projectsBaseDir\Config\WSL",
+    "$projectsBaseDir\Config\Terminal",
+    "$projectsBaseDir\Config\Nginx",
+    
+    # Template directories - Comprehensive structure
+    "$projectsBaseDir\Templates\WebApp",
+    "$projectsBaseDir\Templates\API",
+    "$projectsBaseDir\Templates\ReactApp",
+    "$projectsBaseDir\Templates\VueApp",
+    "$projectsBaseDir\Templates\AngularApp",
+    "$projectsBaseDir\Templates\NextApp",
+    "$projectsBaseDir\Templates\DotNetAPI",
+    "$projectsBaseDir\Templates\PythonAPI",
+    "$projectsBaseDir\Templates\ML",
+    
+    # Data directories - Comprehensive structure
+    "$projectsBaseDir\Data\Raw",
+    "$projectsBaseDir\Data\Processed",
+    "$projectsBaseDir\Data\Models",
+    "$projectsBaseDir\Data\Results",
+    
+    # Documentation directories - Comprehensive structure
+    "$projectsBaseDir\Documentation\Architecture",
+    "$projectsBaseDir\Documentation\APIs",
+    "$projectsBaseDir\Documentation\UserGuides",
+    "$projectsBaseDir\Documentation\DevGuides",
+    
+    # Special directories - Comprehensive structure
+    "$projectsBaseDir\Local",
+    "$projectsBaseDir\Scratch",
+    "$projectsBaseDir\Backup"
+)
+
+# Determine which folders to create based on selected project structure
+$projectFolders = $simpleProjectFolders  # Default to simple structure
+
+if ($ProjectStructure -contains "comprehensive") {
+    $projectFolders = $comprehensiveProjectFolders
+    Write-Host "Creating comprehensive project structure..." -ForegroundColor Yellow
+}
+elseif ($ProjectStructure -contains "simple") {
+    $projectFolders = $simpleProjectFolders
+    Write-Host "Creating simple project structure..." -ForegroundColor Yellow
+}
 
 foreach ($folder in $projectFolders) {
     if (!(Test-Path -Path $folder)) {

@@ -50,13 +50,32 @@ This repository contains scripts and configuration files for setting up a standa
 
 ## How to Use
 
+### Interactive Setup (Recommended)
+
+The recommended way to set up your Dev Box is using the interactive setup wizard:
+
+1. Clone this repository to your Dev Box
+2. Navigate to the repository folder
+3. Run the interactive setup script:
+
+```powershell
+.\Start-DevBoxSetup.ps1
+```
+
+This will launch a user-friendly wizard that guides you through the setup process:
+- Select which tools to install
+- Configure Git username and email
+- Choose WSL distributions
+- Provide API keys and credentials
+- Customize your development environment
+
 ### Automatic Setup (Azure Dev Box Task)
 
-The catalog is designed to work with Azure Dev Box tasks. When a new Dev Box is created, the setup scripts can be automatically run.
+The catalog is designed to work with Azure Dev Box tasks. When a new Dev Box is created, the setup scripts can be automatically run using the task definitions.
 
-### Manual Setup
+### Manual Setup (Advanced)
 
-If you need to run the setup manually:
+If you prefer to run the setup without the interactive UI:
 
 1. Clone this repository to your Dev Box
 2. Navigate to the repository folder
@@ -71,11 +90,11 @@ If you need to run the setup manually:
 You can also run individual setup scripts if you only need specific components:
 
 ```powershell
-# Install developer tools
-.\setup-scripts\install-tools.ps1
+# Install specific developer tools
+.\setup-scripts\install-tools.ps1 -Components @("git", "vscode", "node", "docker")
 
-# Configure Git
-.\setup-scripts\git-configuration.ps1
+# Configure Git with specific settings
+.\setup-scripts\git-configuration.ps1 -GitUsername "Your Name" -GitEmail "your.email@example.com"
 
 # Configure VS Code
 .\setup-scripts\vscode-configuration.ps1
