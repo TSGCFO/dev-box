@@ -403,7 +403,7 @@ if (Test-Path -Path $nodeConfigFile) {
 }
 
 # If we didn't find package.json in nodejs-config.md, use a default template
-if (!$foundPackageJson) {
+if (-not $foundPackageJson) {
     $packageJsonTemplate = @"
 {
   "name": "app-name",
@@ -455,7 +455,7 @@ if (Test-Path -Path $pythonConfigFile) {
 }
 
 # If we didn't find requirements in python-config.md, use a default template
-if (!$foundRequirements) {
+if (-not $foundRequirements) {
     $requirementsTemplate = @"
 # Web frameworks
 flask==2.2.3
@@ -518,6 +518,15 @@ if (Test-Path -Path $nodeDockerfileSource) {
     Write-Host "Node.js Dockerfile template not found at $nodeDockerfileSource" -ForegroundColor Yellow
 }
 
+# Copy Frontend Dockerfile if it exists
+$frontendDockerfileSource = Join-Path -Path $dockerConfigDir -ChildPath "frontend.Dockerfile"
+if (Test-Path -Path $frontendDockerfileSource) {
+    Copy-Item -Path $frontendDockerfileSource -Destination "C:\Projects\Templates\WebApp\Dockerfile" -Force
+    Copy-Item -Path $frontendDockerfileSource -Destination "C:\Projects\Templates\ReactApp\Dockerfile" -Force
+} else {
+    Write-Host "Frontend Dockerfile template not found at $frontendDockerfileSource" -ForegroundColor Yellow
+}
+
 # Create a basic Python Dockerfile if needed - no duplication as this is unique to setup-files-folders.ps1
 $pythonDockerfileTemplate = @"
 # Python API Dockerfile
@@ -560,7 +569,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  isMain: \$[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
+  isMain: `$[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
 
 stages:
   - stage: Build
@@ -607,14 +616,14 @@ stages:
               buildType: 'current'
               downloadType: 'single'
               artifactName: 'drop'
-              downloadPath: '\$(System.ArtifactsDirectory)'
+              downloadPath: '`$(System.ArtifactsDirectory)'
 
           - task: AzureWebApp@1
             inputs:
-              azureSubscription: '\$(AZURE_SUBSCRIPTION)'
+              azureSubscription: '`$(AZURE_SUBSCRIPTION)'
               appType: 'webApp'
-              appName: '\$(APP_NAME)'
-              package: '\$(System.ArtifactsDirectory)/drop'
+              appName: '`$(APP_NAME)'
+              package: '`$(System.ArtifactsDirectory)/drop'
               deploymentMethod: 'auto'
 "@
 
@@ -678,8 +687,8 @@ jobs:
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
       with:
-        app-name: \${{ secrets.AZURE_WEBAPP_NAME }}
-        publish-profile: \${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        app-name: `${{ secrets.AZURE_WEBAPP_NAME }}
+        publish-profile: `${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
         package: build
 "@
 

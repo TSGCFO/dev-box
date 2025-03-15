@@ -4,8 +4,8 @@ services:
   # Application service - Node.js API
   api:
     build:
-      context: ./api
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: node-api.Dockerfile
     ports:
       - "3000:3000"
     environment:
@@ -23,8 +23,8 @@ services:
   # Frontend service - React
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: frontend.Dockerfile
     ports:
       - "8080:80"
     volumes:
@@ -88,6 +88,6 @@ networks:
     driver: bridge
 
 volumes:
-  postgres-data:
-  redis-data:
-  mongo-data:
+  postgres-data: {}
+  redis-data: {}
+  mongo-data: {}

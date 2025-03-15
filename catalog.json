@@ -4,82 +4,89 @@
   "description": "Complete Azure Dev Box environment setup including developer tools, VS Code extensions, Git configuration, and environment settings",
   "scripts": [
     {
-      "name": "Master Setup",
+      "runAsUser": true,
       "description": "Main setup script that orchestrates the entire Azure Dev Box configuration",
       "scriptPath": "setup-scripts/master-setup.ps1",
-      "runAsUser": true,
+      "name": "Master Setup",
       "runElevated": true
     },
     {
-      "name": "Setup Files and Folders",
+      "runAsUser": true,
       "description": "Creates standard file structure, templates, and example files for development",
       "scriptPath": "setup-scripts/setup-files-folders.ps1",
-      "runAsUser": true,
+      "name": "Setup Files and Folders",
       "runElevated": false
     },
     {
-      "name": "Install Developer Tools",
+      "runAsUser": true,
       "description": "Installs common developer tools, languages, and applications",
       "scriptPath": "setup-scripts/install-tools.ps1",
-      "runAsUser": true,
+      "name": "Install Developer Tools",
       "runElevated": true
     },
     {
-      "name": "Configure Git",
+      "runAsUser": true,
       "description": "Sets up Git configuration, aliases, and global gitignore",
       "scriptPath": "setup-scripts/git-configuration.ps1",
-      "runAsUser": true,
+      "name": "Configure Git",
       "runElevated": false
     },
     {
-      "name": "Configure VS Code",
+      "runAsUser": true,
       "description": "Installs VS Code extensions and sets up optimal development settings",
       "scriptPath": "setup-scripts/vscode-configuration.ps1",
-      "runAsUser": true,
+      "name": "Configure VS Code",
       "runElevated": false
     },
     {
-      "name": "Setup Environment",
+      "runAsUser": true,
       "description": "Configures environment variables, PowerShell profile, and project structures",
       "scriptPath": "setup-scripts/setup-environment.ps1",
-      "runAsUser": true,
+      "name": "Setup Environment",
       "runElevated": true
     }
   ],
   "tasks": [
     {
-      "name": "setup-dev-environment",
+      "runElevated": true,
       "description": "Sets up the complete development environment",
       "script": "setup-scripts/master-setup.ps1",
-      "runElevated": true,
+      "name": "setup-dev-environment",
       "runOnce": false
     },
     {
-      "name": "update-tools",
+      "runElevated": false,
+      "description": "Creates standard file structure, templates, and example files",
+      "script": "setup-scripts/setup-files-folders.ps1",
+      "name": "setup-files-folders",
+      "runOnce": false
+    },
+    {
+      "runElevated": true,
       "description": "Updates all developer tools",
       "script": "setup-scripts/install-tools.ps1",
-      "runElevated": true,
+      "name": "update-tools",
       "runOnce": false
     },
     {
-      "name": "configure-git",
+      "runElevated": false,
       "description": "Reconfigures Git settings",
       "script": "setup-scripts/git-configuration.ps1",
-      "runElevated": false,
+      "name": "configure-git",
       "runOnce": false
     },
     {
-      "name": "configure-vscode",
+      "runElevated": false,
       "description": "Updates VS Code settings and extensions",
       "script": "setup-scripts/vscode-configuration.ps1",
-      "runElevated": false,
+      "name": "configure-vscode",
       "runOnce": false
     },
     {
-      "name": "refresh-environment",
+      "runElevated": true,
       "description": "Refreshes environment settings and PowerShell profile",
       "script": "setup-scripts/setup-environment.ps1",
-      "runElevated": true,
+      "name": "refresh-environment",
       "runOnce": false
     }
   ],

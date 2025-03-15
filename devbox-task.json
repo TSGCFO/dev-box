@@ -2,45 +2,45 @@
   "version": "1.0",
   "tasks": [
     {
-      "name": "setup-dev-environment",
+      "runElevated": true,
       "description": "Sets up the complete development environment",
       "script": "setup-scripts/master-setup.ps1",
-      "runElevated": true,
+      "name": "setup-dev-environment",
       "runOnce": false
     },
     {
-      "name": "setup-files-folders",
+      "runElevated": false,
       "description": "Creates standard file structure, templates, and example files",
       "script": "setup-scripts/setup-files-folders.ps1",
-      "runElevated": false,
+      "name": "setup-files-folders",
       "runOnce": false
     },
     {
-      "name": "update-tools",
+      "runElevated": true,
       "description": "Updates all developer tools",
       "script": "setup-scripts/install-tools.ps1",
-      "runElevated": true,
+      "name": "update-tools",
       "runOnce": false
     },
     {
-      "name": "configure-git",
+      "runElevated": false,
       "description": "Reconfigures Git settings",
       "script": "setup-scripts/git-configuration.ps1",
-      "runElevated": false,
+      "name": "configure-git",
       "runOnce": false
     },
     {
-      "name": "configure-vscode",
+      "runElevated": false,
       "description": "Updates VS Code settings and extensions",
       "script": "setup-scripts/vscode-configuration.ps1",
-      "runElevated": false,
+      "name": "configure-vscode",
       "runOnce": false
     },
     {
-      "name": "refresh-environment",
+      "runElevated": true,
       "description": "Refreshes environment settings and PowerShell profile",
       "script": "setup-scripts/setup-environment.ps1",
-      "runElevated": true,
+      "name": "refresh-environment",
       "runOnce": false
     }
   ]
